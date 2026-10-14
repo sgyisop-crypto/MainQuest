@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111411">
+  <title>MainQuest — Personal Goals</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: light-dark(#f2f4f0, #101310);
+      --panel: light-dark(#ffffff, #181c18);
+      --panel-soft: light-dark(#f7f9f5, #1d221d);
+      --text: light-dark(#172017, #edf4eb);
+      --muted: light-dark(#687368, #97a397);
+      --border: light-dark(#e1e7dd, #2b332b);
+      --green: #a6ff4d;
+      --green-deep: light-dark(#315d16, #b7ff77);
+      --green-wash: light-dark(#edf9e2, #25351c);
+      --shadow: 0 18px 50px rgba(0,0,0,.10);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app-root { min-height: 100vh; width: 100%; background: var(--bg); border-radius: 0; }
+    .topbar { height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(18px, 4vw, 54px); border-bottom: 1px solid var(--border); background: light-dark(#fff, #141714); }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 850; letter-spacing: -.055em; font-size: 23px; }
+    .brand-mark { width: 35px; height: 35px; display: grid; place-items: center; background: var(--green); color: #14200d; border-radius: 11px; font-size: 20px; box-shadow: 0 0 22px rgba(166,255,77,.14); }
+    .brand span em { color: var(--green-deep); font-style: normal; }
+    .top-right { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; box-shadow: 0 0 10px rgba(166,255,77,.65); margin-right: 6px; }
+    .avatar { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 50%; display: grid; place-items: center; color: var(--green-deep); font-size: 12px; font-weight: 800; background: var(--panel-soft); }
+    .layout { max-width: 1360px; margin: 0 auto; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 30px; padding: 32px clamp(18px, 4vw, 54px) 56px; }
+    aside { padding-top: 6px; }
+    .nav-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .15em; font-weight: 800; padding: 0 12px; margin: 16px 0 10px; }
+    .nav-item { width: 100%; display: flex; align-items: center; gap: 12px; border: 0; background: transparent; color: var(--muted); padding: 12px; border-radius: 12px; text-align: left; font-size: 13px; font-weight: 650; margin: 3px 0; }
+    .nav-item .nav-icon { width: 20px; text-align: center; font-size: 16px; }
+    .nav-item.active { background: var(--green-wash); color: var(--green-deep); }
+    .nav-item .count { margin-left: auto; font-size: 11px; opacity: .8; }
+    .side-note { margin-top: 34px; border: 1px solid var(--border); background: var(--panel); border-radius: 16px; padding: 16px; }
+    .side-note .spark { font-size: 20px; }
+    .side-note h3 { margin: 10px 0 6px; font-size: 13px; }
+    .side-note p { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 0; }
+    main { min-width: 0; }
+    .eyebrow { font-size: 10px; color: var(--green-deep); letter-spacing: .16em; text-transform: uppercase; font-weight: 850; margin-bottom: 12px; }
+    .hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+    h1 { font-size: clamp(30px, 4vw, 43px); letter-spacing: -.06em; line-height: 1.06; margin: 0; font-weight: 850; }
+    .hero p { margin: 12px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .date-chip { border: 1px solid var(--border); border-radius: 12px; padding: 10px 13px; white-space: nowrap; color: var(--muted); font-size: 11px; font-weight: 700; background: var(--panel); }
+    .overview { display: grid; grid-template-columns: minmax(0, 1.55fr) repeat(2, minmax(130px, .8fr)); gap: 14px; margin-bottom: 28px; }
+    .card { border: 1px solid var(--border); background: var(--panel); border-radius: var(--radius); padding: 21px; min-width: 0; }
+    .progress-card { background: var(--green); color: #18220f; border-color: transparent; position: relative; overflow: hidden; }
+    .progress-card::after { content: ""; width: 150px; height: 150px; border: 1px solid rgba(20,32,13,.12); border-radius: 50%; position: absolute; right: -45px; top: -55px; box-shadow: 0 0 0 18px rgba(20,32,13,.035), 0 0 0 38px rgba(20,32,13,.025); }
+    .card-label { color: var(--muted); text-transform: uppercase; letter-spacing: .11em; font-size: 10px; font-weight: 800; }
+    .progress-card .card-label { color: #334b20; }
+    .progress-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; position: relative; z-index: 1; }
+    .big-number { font-size: 39px; font-weight: 850; letter-spacing: -.065em; line-height: 1.2; margin-top: 12px; }
+    .big-number small { font-size: 16px; letter-spacing: -.03em; }
+    .progress-caption { font-size: 11px; margin-top: 6px; color: #344c22; }
+    .progress-ring { width: 47px; height: 47px; border-radius: 50%; border: 5px solid rgba(23,37,13,.17); border-top-color: #203b0b; transform: rotate(25deg); }
+    .stat-number { font-size: 29px; letter-spacing: -.06em; font-weight: 820; margin-top: 16px; }
+    .stat-caption { color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 30px 0 15px; }
+    .section-head h2 { font-size: 17px; letter-spacing: -.035em; margin: 0; }
+    .section-head p { color: var(--muted); font-size: 11px; margin: 5px 0 0; }
+    .primary-btn { border: 0; background: var(--green); color: #18220f; padding: 11px 15px; border-radius: 11px; font-size: 12px; font-weight: 850; box-shadow: 0 5px 18px rgba(166,255,77,.09); transition: transform .15s, filter .15s; }
+    .primary-btn:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .filters { display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 12px; scrollbar-width: thin; }
+    .filter-btn { flex: 0 0 auto; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); color: var(--muted); padding: 8px 12px; font-size: 11px; font-weight: 750; }
+    .filter-btn.active { background: var(--green-wash); color: var(--green-deep); border-color: light-dark(#d2e9bf, #3c5430); }
+    .goal-list { display: grid; gap: 10px; }
+    .goal { display: flex; align-items: flex-start; gap: 13px; padding: 16px; border: 1px solid var(--border); background: var(--panel); border-radius: 15px; transition: border-color .15s, opacity .15s; }
+    .goal:hover { border-color: light-dark(#b8c8af, #4a5a45); }
+    .goal.completed { opacity: .68; }
+    .goal.completed .goal-title { text-decoration: line-through; color: var(--muted); }
+    .goal-check { appearance: none; flex: 0 0 19px; width: 19px; height: 19px; border: 1.5px solid light-dark(#c5d0c0, #4d594a); border-radius: 6px; background: transparent; margin: 1px 0 0; display: grid; place-items: center; cursor: pointer; }
+    .goal-check:checked { background: var(--green); border-color: var(--green); }
+    .goal-check:checked::after { content: "✓"; color: #15210d; font-size: 13px; font-weight: 900; }
+    .goal-content { flex: 1; min-width: 0; }
+    .goal-title { font-size: 13px; font-weight: 750; line-height: 1.45; }
+    .goal-desc { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+    .goal-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .tag { border-radius: 6px; padding: 4px 7px; font-size: 9px; font-weight: 800; background: var(--panel-soft); color: var(--muted); border: 1px solid var(--border); }
+    .tag.tech { color: #9ec7ff; background: light-dark(#eef5ff, #1e2b3a); border-color: light-dark(#d9e8ff, #2a3c50); }
+    .tag.life { color: #d7a7ff; background: light-dark(#f7edff, #30243a); border-color: light-dark(#ecd8ff, #453050); }
+    .tag.cooking { color: #ffb57c; background: light-dark(#fff1e6, #39291d); border-color: light-dark(#ffdfc4, #4c3424); }
+    .goal-actions { display: flex; align-items: center; gap: 4px; }
+    .icon-btn { width: 30px; height: 30px; display: grid; place-items: center; background: transparent; border: 0; border-radius: 8px; color: var(--muted); font-size: 17px; }
+    .icon-btn:hover { background: var(--panel-soft); color: var(--text); }
+    .empty { text-align: center; border: 1px dashed var(--border); border-radius: 15px; padding: 34px 16px; color: var(--muted); font-size: 12px; }
+    .empty strong { display: block; color: var(--text); margin-bottom: 6px; font-size: 14px; }
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }
+    .mini-card h3 { margin: 0; font-size: 13px; }
+    .mini-card .sub { color: var(--muted); font-size: 11px; margin-top: 5px; }
+    .mini-progress { height: 6px; background: var(--panel-soft); border-radius: 20px; overflow: hidden; margin-top: 17px; }
+    .mini-progress span { display: block; height: 100%; width: 0%; background: var(--green); border-radius: 20px; transition: width .25s; }
+    .mini-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 9px; color: var(--muted); font-size: 10px; }
+    .quote { display: flex; align-items: flex-start; gap: 12px; }
+    .quote-mark { color: var(--green-deep); font-size: 25px; line-height: 1; }
+    .quote p { margin: 0; font-size: 12px; line-height: 1.65; }
+    .quote small { display: block; color: var(--muted); margin-top: 9px; font-size: 10px; }
+    .footer { color: var(--muted); font-size: 10px; display: flex; justify-content: space-between; gap: 12px; padding-top: 25px; }
+    .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 10; background: rgba(0,0,0,.58); padding: 18px; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(100%, 460px); border: 1px solid var(--border); border-radius: 20px; background: var(--panel); padding: 23px; box-shadow: var(--shadow); }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .modal-head h2 { margin: 0; font-size: 19px; letter-spacing: -.04em; }
+    .close-btn { border: 0; background: transparent; color: var(--muted); font-size: 22px; }
+    .field { display: grid; gap: 7px; margin: 14px 0; }
+    .field label { font-size: 11px; color: var(--muted); font-weight: 750; }
+    .field input, .field select { width: 100%; background: var(--panel-soft); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 11px 12px; outline: none; font-size: 12px; }
+    .field input:focus, .field select:focus { border-color: var(--green-deep); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+    .secondary-btn { border: 1px solid var(--border); background: transparent; color: var(--muted); padding: 10px 14px; border-radius: 10px; font-size: 12px; font-weight: 750; }
+    .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--text); color: var(--bg); padding: 11px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; transition: .2s; z-index: 20; box-shadow: var(--shadow); }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 950px) { .layout { grid-template-columns: 1fr; gap: 20px; padding-top: 23px; } aside { display: none; } .overview { grid-template-columns: 1.3fr 1fr 1fr; } }
+    @media (max-width: 620px) { .topbar { height: 65px; padding: 0 17px; } .brand { font-size: 20px; } .top-right .status-text { display: none; } .layout { padding: 25px 15px 38px; } .hero { align-items: flex-start; flex-direction: column; gap: 14px; } .date-chip { display: none; } .overview { grid-template-columns: 1fr 1fr; gap: 10px; } .progress-card { grid-column: 1 / -1; } .card { padding: 17px; border-radius: 15px; } .stat-number { margin-top: 12px; } .section-head { align-items: flex-start; } .section-head .primary-btn { padding: 10px 11px; white-space: nowrap; } .goal { padding: 13px 11px; gap: 10px; } .goal-title { font-size: 12px; } .goal-desc { font-size: 10px; } .goal-actions { flex-direction: column; } .bottom-row { grid-template-columns: 1fr; gap: 10px; } .footer { flex-direction: column; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <div class="app-root">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">⌘</div><span>Main<em>Quest</em></span></div>
+      <div class="top-right"><span class="status-text"><span class="status-dot"></span>LOCAL SAVE ACTIVE</span><div class="avatar">MQ</div></div>
+    </header>
+    <div class="layout">
+      <aside>
+        <div class="nav-label">Workspace</div>
+        <button class="nav-item active" data-filter="All"><span class="nav-icon">▦</span>All goals <span class="count" id="sideAll">0</span></button>
+        <button class="nav-item" data-filter="Tech"><span class="nav-icon">⌘</span>Build lab <span class="count" id="sideTech">0</span></button>
+        <button class="nav-item" data-filter="College"><span class="nav-icon">⌁</span>College <span class="count" id="sideCollege">0</span></button>
+        <button class="nav-item" data-filter="Cooking"><span class="nav-icon">♨</span>Kitchen quest <span class="count" id="sideCooking">0</span></button>
+        <button class="nav-item" data-filter="Life"><span class="nav-icon">✳</span>Life & hobbies <span class="count" id="sideLife">0</span></button>
+        <div class="nav-label">Your system</div>
+        <button class="nav-item" id="showAll"><span class="nav-icon">◷</span>Everything in progress</button>
+        <div class="side-note"><div class="spark">✳</div><h3>Progress, not perfection.</h3><p>You're building a life, not clearing a checklist. Keep the next step small and keep going.</p></div>
+      </aside>
+      <main>
+        <div class="hero">
+          <div><div class="eyebrow">PERSONAL OPERATING SYSTEM / 001</div><h1>Make your own<br>momentum.</h1><p>Your ideas deserve a place to live. Pick a quest, make progress, repeat.</p></div>
+          <div class="date-chip" id="todayDate">TODAY · —</div>
+        </div>
+        <section class="overview" aria-label="Goal overview">
+          <div class="card progress-card"><div class="progress-top"><div><div class="card-label">Overall progress</div><div class="big-number"><span id="percent">0</span><small>%</small></div><div class="progress-caption" id="progressCaption">Your first step starts here.</div></div><div class="progress-ring" aria-hidden="true"></div></div><div class="mini-progress" style="background:rgba(23,37,13,.15);margin-top:18px"><span id="overallBar" style="background:#1b3210"></span></div></div>
+          <div class="card"><div class="card-label">Total quests</div><div class="stat-number" id="totalCount">0</div><div class="stat-caption">Ideas worth pursuing</div></div>
+          <div class="card"><div class="card-label">Completed</div><div class="stat-number" id="doneCount">0</div><div class="stat-caption" id="remainingCaption">One step at a time</div></div>
+        </section>
+        <div class="section-head"><div><h2>Your quest board</h2><p id="listSubtitle">A little progress adds up.</p></div><button class="primary-btn" id="addGoalBtn">＋ Add a goal</button></div>
+        <div class="filters" id="filters" aria-label="Filter goals">
+          <button class="filter-btn active" data-filter="All">All goals</button><button class="filter-btn" data-filter="Tech">Build lab</button><button class="filter-btn" data-filter="College">College</button><button class="filter-btn" data-filter="Cooking">Cooking</button><button class="filter-btn" data-filter="Life">Life & hobbies</button><button class="filter-btn" data-filter="Done">Completed</button>
+        </div>
+        <section class="goal-list" id="goalList" aria-live="polite"></section>
+        <section class="bottom-row">
+          <div class="card mini-card"><h3>Weekly momentum</h3><div class="sub">Your progress across all quests</div><div class="mini-progress"><span id="weeklyBar"></span></div><div class="mini-foot"><span id="weeklyLabel">0 of 0 quests complete</span><span id="weeklyPercent">0%</span></div></div>
+          <div class="card mini-card"><div class="quote"><div class="quote-mark">✳</div><div><p id="quoteText">You don't have to do everything today. Just make one thing a little more real.</p><small>YOUR REMINDER FOR TODAY</small></div></div></div>
+        </section>
+        <div class="footer"><span>MAINQUEST · YOUR LIFE, YOUR BUILD.</span><span>Progress saves in this browser automatically.</span></div>
+      </main>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <form class="modal" id="goalForm">
+      <div class="modal-head"><h2 id="modalTitle">Add a quest</h2><button class="close-btn" type="button" id="closeModal" aria-label="Close">×</button></div>
+      <div class="field"><label for="goalTitle">GOAL NAME *</label><input id="goalTitle" maxlength="90" placeholder="e.g. Bake my first chocolate-chip cookies" required></div>
+      <div class="field"><label for="goalDesc">SHORT NOTE (OPTIONAL)</label><input id="goalDesc" maxlength="140" placeholder="What does the next step look like?"></div>
+      <div class="field"><label for="goalCategory">CATEGORY</label><select id="goalCategory"><option value="Tech">Build lab</option><option value="College">College</option><option value="Cooking">Cooking</option><option value="Life">Life & hobbies</option></select></div>
+      <div class="modal-actions"><button class="secondary-btn" type="button" id="cancelModal">Cancel</button><button class="primary-btn" type="submit">Add to board ↗</button></div>
+    </form>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    const STORAGE_KEY = 'mainquest-goals-v1';
+    const starterGoals = [
+      { id: 'g1', title: 'Keep up with college and midsems', desc: 'Stay consistent with lectures, revision and attendance.', category: 'College', done: false },
+      { id: 'g2', title: 'Keep building my C++ and DSA skills', desc: 'Practice regularly and strengthen the fundamentals.', category: 'Tech', done: false },
+      { id: 'g3', title: 'Build a personal rover with ESP32', desc: 'Work toward a controllable rover with sensors and custom parts.', category: 'Tech', done: false },
+      { id: 'g4', title: 'Explore wireless security in an authorized lab', desc: 'Learn Wi-Fi security by testing my own lab setup.', category: 'Tech', done: false },
+      { id: 'g5', title: 'Build a portfolio of 3+ projects', desc: 'Document what I build and what I learn along the way.', category: 'Tech', done: false },
+      { id: 'g6', title: 'Learn to bake chocolate-chip cookies', desc: 'Start with a small batch and iterate on the recipe.', category: 'Cooking', done: false },
+      { id: 'g7', title: 'Experiment with new chicken and pasta recipes', desc: 'Practice seasoning, heat control and timing.', category: 'Cooking', done: false },
+      { id: 'g8', title: 'Learn to make a rich, tender lamb stew', desc: 'Build flavor slowly and learn how to braise.', category: 'Cooking', done: false },
+      { id: 'g9', title: 'Make time for friends and college memories', desc: 'Leave room for spontaneous plans and good conversations.', category: 'Life', done: false },
+      { id: 'g10', title: 'Keep exploring game development and guitar', desc: 'Make space for hobbies outside engineering.', category: 'Life', done: false }
+    ];
+    let goals = loadGoals();
+    let activeFilter = 'All';
+    const categoryLabels = { Tech: 'Build lab', College: 'College', Cooking: 'Cooking', Life: 'Life & hobbies' };
+    const $ = (selector) => document.querySelector(selector);
+    const goalList = $('#goalList');
+    function loadGoals() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : starterGoals.map(goal => ({ ...goal }));
+      } catch (error) { return starterGoals.map(goal => ({ ...goal })); }
+    }
+    function saveGoals() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(goals)); }
+      catch (error) { showToast('Could not save. Check browser storage settings.'); }
+    }
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    }
+    function categoryClass(category) { return category.toLowerCase(); }
+    function filteredGoals() {
+      if (activeFilter === 'Done') return goals.filter(goal => goal.done);
+      if (activeFilter === 'All') return goals;
+      return goals.filter(goal => goal.category === activeFilter);
+    }
+    function renderGoals() {
+      const shown = filteredGoals();
+      if (!shown.length) {
+        goalList.innerHTML = '<div class="empty"><strong>Nothing here just yet.</strong>Add a goal or switch filters to find your next quest.</div>';
+      } else {
+        goalList.innerHTML = shown.map(goal => `
+          <article class="goal ${goal.done ? 'completed' : ''}" data-id="${escapeHTML(goal.id)}">
+            <input class="goal-check" type="checkbox" aria-label="Mark ${escapeHTML(goal.title)} complete" ${goal.done ? 'checked' : ''}>
+            <div class="goal-content"><div class="goal-title">${escapeHTML(goal.title)}</div>${goal.desc ? `<div class="goal-desc">${escapeHTML(goal.desc)}</div>` : ''}<div class="goal-meta"><span class="tag ${categoryClass(goal.category)}">${escapeHTML(categoryLabels[goal.category] || goal.category)}</span><span class="tag">${goal.done ? '✓ Completed' : 'In progress'}</span></div></div>
+            <div class="goal-actions"><button class="icon-btn delete-btn" type="button" title="Delete goal" aria-label="Delete ${escapeHTML(goal.title)}">×</button></div>
+          </article>`).join('');
+      }
+      goalList.querySelectorAll('.goal-check').forEach(input => input.addEventListener('change', event => toggleGoal(event.target.closest('.goal').dataset.id)));
+      goalList.querySelectorAll('.delete-btn').forEach(button => button.addEventListener('click', event => deleteGoal(event.target.closest('.goal').dataset.id)));
+      updateStats();
+    }
+    function updateStats() {
+      const total = goals.length;
+      const done = goals.filter(goal => goal.done).length;
+      const percent = total ? Math.round(done / total * 100) : 0;
+      $('#percent').textContent = percent;
+      $('#overallBar').style.width = percent + '%';
+      $('#totalCount').textContent = total;
+      $('#doneCount').textContent = done;
+      $('#remainingCaption').textContent = total - done === 0 && total ? 'Every quest completed!' : `${total - done} still in progress`;
+      $('#progressCaption').textContent = percent === 100 && total ? 'Every quest cleared. What is next?' : done ? `${done} quest${done === 1 ? '' : 's'} down. Keep going.` : 'Your first step starts here.';
+      $('#weeklyBar').style.width = percent + '%';
+      $('#weeklyLabel').textContent = `${done} of ${total} quests complete`;
+      $('#weeklyPercent').textContent = percent + '%';
+      $('#sideAll').textContent = total;
+      $('#sideTech').textContent = goals.filter(goal => goal.category === 'Tech').length;
+      $('#sideCollege').textContent = goals.filter(goal => goal.category === 'College').length;
+      $('#sideCooking').textContent = goals.filter(goal => goal.category === 'Cooking').length;
+      $('#sideLife').textContent = goals.filter(goal => goal.category === 'Life').length;
+      $('#listSubtitle').textContent = activeFilter === 'All' ? 'A little progress adds up.' : activeFilter === 'Done' ? 'Look at what you have already accomplished.' : `${categoryLabels[activeFilter] || activeFilter} · ${filteredGoals().length} quest${filteredGoals().length === 1 ? '' : 's'}`;
+    }
+    function setFilter(filter) {
+      activeFilter = filter;
+      document.querySelectorAll('[data-filter]').forEach(button => button.classList.toggle('active', button.dataset.filter === filter));
+      renderGoals();
+    }
+    function toggleGoal(id) {
+      goals = goals.map(goal => goal.id === id ? { ...goal, done: !goal.done } : goal);
+      saveGoals(); renderGoals();
+      const goal = goals.find(item => item.id === id);
+      if (goal && goal.done) showToast('Quest cleared. Nice work! ✳');
+    }
+    function deleteGoal(id) {
+      const goal = goals.find(item => item.id === id);
+      if (!goal) return;
+      goals = goals.filter(item => item.id !== id);
+      saveGoals(); renderGoals(); showToast('Goal removed from your board.');
+    }
+    function openModal() { $('#modalBackdrop').classList.add('open'); $('#goalTitle').focus(); }
+    function closeModal() { $('#modalBackdrop').classList.remove('open'); $('#goalForm').reset(); }
+    let toastTimer;
+    function showToast(message) {
+      const toast = $('#toast'); toast.textContent = message; toast.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+    document.querySelectorAll('#filters [data-filter], aside [data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
+    $('#showAll').addEventListener('click', () => setFilter('All'));
+    $('#addGoalBtn').addEventListener('click', openModal);
+    $('#closeModal').addEventListener('click', closeModal);
+    $('#cancelModal').addEventListener('click', closeModal);
+    $('#modalBackdrop').addEventListener('click', event => { if (event.target === $('#modalBackdrop')) closeModal(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+    $('#goalForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const title = $('#goalTitle').value.trim();
+      if (!title) return;
+      goals.unshift({ id: 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title, desc: $('#goalDesc').value.trim(), category: $('#goalCategory').value, done: false });
+      saveGoals(); setFilter(activeFilter); closeModal(); showToast('New quest added. Make it happen.');
+    });
+    const now = new Date();
+    $('#todayDate').textContent = 'TODAY · ' + now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+    const quotes = [
+      'You don\'t have to do everything today. Just make one thing a little more real.',
+      'Small steps count, especially on busy days.',
+      'Build things. Learn things. Make room for life.',
+      'Consistency beats the perfect plan you never start.'
+    ];
+    const dayIndex = Math.floor(new Date(now.getFullYear(), 0, 1).getTime() / 86400000 + now.getTimezoneOffset() / 1440) % quotes.length;
+    $('#quoteText').textContent = quotes[Math.abs(dayIndex)];
+    renderGoals();
+  </script>
+</body>
+</html>
